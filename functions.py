@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import requests
 import tweepy
-import json
 
 
 def db_connection(user, host, port, db, cred=''):
@@ -80,13 +79,17 @@ def create_tweet(df):
     return tweet
 
 
-def execute_tweet(df, schema, table, conn):
+def execute_tweet(df, schema, table, conn, akey, asecret, axtoken, axsecret):
     """
 
     :param df:
     :param schema:
     :param table:
     :param conn:
+    :param akey:
+    :param asecret:
+    :param axtoken:
+    :param axsecret:
     :return:
     """
 
@@ -106,16 +109,16 @@ def execute_tweet(df, schema, table, conn):
         for c in base_check['name']:
             dfx = df[df['name'] == c].reset_index().drop(['index'], axis=1)
 
-            # Pull in API Key
-            twitter_path = '/Users/dylanwatterson/Documents/my_repos/NewCoinListing/twitter_api.json'
-            with open(twitter_path, 'r') as j:
-                key = json.loads(j.read())
+            # # Pull in API Key
+            # twitter_path = '/Users/dylanwatterson/Documents/my_repos/NewCoinListing/twitter_api.json'
+            # with open(twitter_path, 'r') as j:
+            #     key = json.loads(j.read())
 
             # # API keys that yous saved earlier
-            api_key = key['API_KEY']
-            api_secrets = key['API_SECRET_KEY']
-            access_token = key['ACCESS_TOKEN']
-            access_secret = key['ACCESS_TOKEN_SECRET']
+            api_key = akey
+            api_secrets = asecret
+            access_token = axtoken
+            access_secret = axsecret
 
             # # # Authenticate to Twitter
             auth = tweepy.OAuthHandler(api_key, api_secrets)
