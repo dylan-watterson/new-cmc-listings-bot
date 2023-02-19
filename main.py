@@ -2,7 +2,6 @@ from functions import *
 import os
 import json
 
-
 user = os.environ['USER']
 host = os.environ['HOST']
 port = os.environ['PORT']
@@ -13,6 +12,8 @@ api_key = os.environ['API_KEY']
 api_secret = os.environ['API_SECRET']
 ax_token = os.environ['ACCESS_TOKEN']
 ax_token_secret = os.environ['ACCESS_TOKEN_SECRET']
+
+print(user, host, port, db, pw)
 
 
 # user, server, port, db, schema = 'postgres', 'localhost', '5432', 'postgres', 'coins'
