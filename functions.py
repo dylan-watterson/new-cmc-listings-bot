@@ -16,7 +16,7 @@ def db_connection(user, host, port, db, cred=''):
     @return: conn
     """
 
-    conn = create_engine(f'postgresql+psycopg2://{user}:{cred}@{host}:{port}/{db}?sslmode=require')
+    conn = create_engine(f'postgres://{user}:{cred}@{host}:{port}/{db}?sslmode=require')
     return conn
 
 
