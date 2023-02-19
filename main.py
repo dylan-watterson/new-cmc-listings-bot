@@ -8,14 +8,14 @@ port = os.environ['PORT']
 db = os.environ['DB']
 pw = os.environ['PW']
 
-db_uri = os.environ['DATABASE_URI']
+db_url = os.environ['DATABASE_URL']
 
 api_key = os.environ['API_KEY']
 api_secret = os.environ['API_SECRET']
 ax_token = os.environ['ACCESS_TOKEN']
 ax_token_secret = os.environ['ACCESS_TOKEN_SECRET']
 
-print(user, host, port, db, pw, db_uri)
+print(user, host, port, db, pw, db_url)
 
 
 # user, server, port, db, schema = 'postgres', 'localhost', '5432', 'postgres', 'coins'
