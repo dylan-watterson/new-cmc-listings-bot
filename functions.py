@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import requests
 import tweepy
-import os
 
 
 def db_connection(user, host, port, db, cred=''):
@@ -107,7 +106,7 @@ def execute_tweet(df, schema, table, conn, akey, asecret, axtoken, axsecret):
 
     df.to_sql('cmc_current_recently_added', con=conn, schema=schema, if_exists='replace')
 
-    query = os.environ['COIN_CHECK']
+    query = "select name from coins.cmc_current_recently_added EXCEPT select name from coins.cmc_base_recently_added"
 
     base_check = pd.read_sql(text(query), con=conn.connect())
 
