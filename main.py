@@ -3,7 +3,8 @@ import os
 
 user = os.environ['USER']
 host = os.environ['HOST']
-port = os.environ['PORT']
+# port = os.environ['PORT']
+port = '5432'
 db = os.environ['DB']
 pw = os.environ['PW']
 
