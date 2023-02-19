@@ -3,13 +3,14 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import requests
 import tweepy
+import os
 
 
 def db_connection(user, host, port, db, cred=''):
     """
     Postgres database connector.
-    @param user: user name.
-    @param server: server name.
+    @param user: username.
+    @param host: server name.
     @param port: connection port.
     @param db: database name.
     @param cred: password for user name. Default = ''.
@@ -72,8 +73,13 @@ def create_tweet(df):
 
     check_mark = 'U00002705'
     tweet = (
-        f"""{chr(int(check_mark[1:], 16))} New Coin Added on Coin Market Cap!\n\nCoin: {coin}\nSymbol: {sym}\nCurrent Price: """
-        f"""{price}\nFully Diluted MC: {market}\nVolume: {volume}\nBlockchain: {chain}\nAdded: {added}"""
+        f"""{chr(int(check_mark[1:], 16))} New Coin Added on Coin Market Cap!\n\n"""
+        f"""Coin: {coin}\n"""
+        f"""Symbol: {sym}\n"""
+        f"""Current Price: {price}\n"""
+        f"""Fully Diluted MC: {market}\n"""
+        f"""Volume: {volume}\n"""
+        f"""Blockchain: {chain}\nAdded: {added}"""
     )
     print(tweet)
     return tweet
@@ -101,18 +107,13 @@ def execute_tweet(df, schema, table, conn, akey, asecret, axtoken, axsecret):
 
     df.to_sql('cmc_current_recently_added', con=conn, schema=schema, if_exists='replace')
 
-    query = "select name from coins.cmc_current_recently_added EXCEPT select name from coins.cmc_base_recently_added"
+    query = os.environ['COIN_CHECK']
 
     base_check = pd.read_sql(text(query), con=conn.connect())
 
     if not base_check.empty:
         for c in base_check['name']:
             dfx = df[df['name'] == c].reset_index().drop(['index'], axis=1)
-
-            # # Pull in API Key
-            # twitter_path = '/Users/dylanwatterson/Documents/my_repos/NewCoinListing/twitter_api.json'
-            # with open(twitter_path, 'r') as j:
-            #     key = json.loads(j.read())
 
             # # API keys that yous saved earlier
             api_key = akey
@@ -129,6 +130,7 @@ def execute_tweet(df, schema, table, conn, akey, asecret, axtoken, axsecret):
             try:
                 api.verify_credentials()
                 print('Successful Authentication')
+
             except:
                 print('Failed authentication')
 
@@ -143,4 +145,3 @@ def execute_tweet(df, schema, table, conn, akey, asecret, axtoken, axsecret):
         print('No new coins added!')
 
     return
-
