@@ -82,6 +82,7 @@ def create_tweet(df):
         f"""CoinMarketCap #{coin.replace(' ', '')} #{sym} #{chain} #BTC \n"""
         f"""https://coinmarketcap.com/currencies/{coin.replace(' ', '-').lower()}/"""
     )
+    print('Executing Tweet!\n')
     print(tweet)
     return tweet
 
