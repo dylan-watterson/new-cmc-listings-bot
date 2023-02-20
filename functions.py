@@ -79,7 +79,7 @@ def create_tweet(df):
         f"""Fully Diluted MC: {market}\n"""
         f"""Volume: {volume}\n"""
         f"""Blockchain: {chain}\nAdded: {added}\n\n"""
-        f"""@CoinMarketCap #{coin.replace(' ', '')} #{sym} #{chain} #BTC\n"""
+        f"""CoinMarketCap #{coin.replace(' ', '')} #{sym} #{chain} #BTC \n"""
         f"""https://coinmarketcap.com/currencies/{coin.replace(' ', '-').lower()}/"""
     )
     print(tweet)
