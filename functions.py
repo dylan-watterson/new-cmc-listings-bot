@@ -4,6 +4,7 @@ import pandas as pd
 import requests
 import tweepy
 import pyshorteners
+import re
 
 
 def db_connection(user, host, port, db, cred=''):
@@ -74,11 +75,15 @@ def create_tweet(df):
     # create an instance of the Shortener class
     shortener = pyshorteners.Shortener()
 
-    url = f"https://coinmarketcap.com/currencies/{coin.replace(' ', '-').lower()}/"
+    coin_url = re.sub(r'[\s\W_]+', '-', coin.lower())
+    url = f"https://coinmarketcap.com/currencies/{coin_url}/"
 
     # shorten the URL
     short_url = shortener.tinyurl.short(url)
     print(short_url, len(short_url))
+
+    hashtag_coin = re.sub(r'[\s\W_]+', '', coin)
+
     check_mark = 'U00002705'
     tweet = (
         f"""{chr(int(check_mark[1:], 16))} New Coin Added on Coin Market Cap!\n\n"""
@@ -88,7 +93,7 @@ def create_tweet(df):
         f"""Fully Diluted MC: {market}\n"""
         # f"""Volume: {volume}\n"""
         f"""Blockchain: {chain}\nAdded: {added}\n\n"""
-        f"""CoinMarketCap #{coin.replace(' ', '')} #{sym} #{chain} #BTC \n"""
+        f"""CoinMarketCap #{hashtag_coin} #{sym} {'' if chain == 'Own Blockchain'else '#'+chain} #BTC \n"""
         f"""{short_url}"""
     )
     print('Executing Tweet!\n')
