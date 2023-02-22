@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import requests
 import tweepy
+import pyshorteners
 
 
 def db_connection(user, host, port, db, cred=''):
@@ -70,6 +71,14 @@ def create_tweet(df):
     chain = df['blockchain'].head(1)[0]
     added = df['added'].head(1)[0]
 
+    # create an instance of the Shortener class
+    shortener = pyshorteners.Shortener()
+
+    url = f"https://coinmarketcap.com/currencies/{coin.replace(' ', '-').lower()}/"
+
+    # shorten the URL
+    short_url = shortener.tinyurl.short(url)
+
     check_mark = 'U00002705'
     tweet = (
         f"""{chr(int(check_mark[1:], 16))} New Coin Added on Coin Market Cap!\n\n"""
@@ -80,7 +89,7 @@ def create_tweet(df):
         f"""Volume: {volume}\n"""
         f"""Blockchain: {chain}\nAdded: {added}\n\n"""
         f"""CoinMarketCap #{coin.replace(' ', '')} #{sym} #{chain} #BTC \n"""
-        f"""https://coinmarketcap.com/currencies/{coin.replace(' ', '-').lower()}/"""
+        f"""{short_url}"""
     )
     print('Executing Tweet!\n')
     print(tweet)
