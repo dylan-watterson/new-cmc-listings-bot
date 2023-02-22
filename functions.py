@@ -78,7 +78,7 @@ def create_tweet(df):
 
     # shorten the URL
     short_url = shortener.tinyurl.short(url)
-
+    print(short_url, len(short_url))
     check_mark = 'U00002705'
     tweet = (
         f"""{chr(int(check_mark[1:], 16))} New Coin Added on Coin Market Cap!\n\n"""
@@ -86,7 +86,7 @@ def create_tweet(df):
         f"""Symbol: {sym}\n"""
         f"""Current Price: {price}\n"""
         f"""Fully Diluted MC: {market}\n"""
-        f"""Volume: {volume}\n"""
+        # f"""Volume: {volume}\n"""
         f"""Blockchain: {chain}\nAdded: {added}\n\n"""
         f"""CoinMarketCap #{coin.replace(' ', '')} #{sym} #{chain} #BTC \n"""
         f"""{short_url}"""
