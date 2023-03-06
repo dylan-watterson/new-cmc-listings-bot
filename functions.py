@@ -68,10 +68,10 @@ def create_tweet(df):
     sym = df['symbol'].head(1)[0]
     price = df['price'].head(1)[0]
     market = df['fully_diluted_market_cap'].head(1)[0]
-    volume = df['volume'].head(1)[0]
+    # volume = df['volume'].head(1)[0]
     chain = df['blockchain'].head(1)[0]
-    added = df['added'].head(1)[0]
-
+    # added = df['added'].head(1)[0]
+    print(chain, str(chain))
     # create an instance of the Shortener class
     shortener = pyshorteners.Shortener()
 
@@ -92,8 +92,8 @@ def create_tweet(df):
         f"""Current Price: {price}\n"""
         f"""Fully Diluted MC: {market}\n"""
         # f"""Volume: {volume}\n"""
-        f"""Blockchain: {chain}\nAdded: {added}\n\n"""
-        f"""CoinMarketCap #{hashtag_coin} #{sym} {'' if chain == 'Own Blockchain'else '#'+chain} #BTC \n"""
+        f"""Blockchain: {chain}\n"""#Added: {added}\n\n"""
+        f"""#crypto #cryptocurrency #{hashtag_coin} #{sym} {'' if chain == 'Own Blockchain' else '#'+chain} #BTC \n"""
         f"""{short_url}"""
     )
     print('Executing Tweet!\n')
