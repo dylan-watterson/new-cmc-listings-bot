@@ -37,9 +37,11 @@ def cmc_recently_added():
 
     recent_coins = soup.find('table')
     names = soup.find_all('p', {'class': 'ePTNty'})
+    print(names)
     symbols = soup.find_all('p', {'class': 'coin-item-symbol'})
 
     names = [name.text for name in names]
+    print(names)
     symbols = [sym.text for sym in symbols]
 
     df_table = pd.read_html(str(recent_coins))
