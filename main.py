@@ -20,13 +20,20 @@ conn = db_connection(user=user, host=host, port=port, db=db, cred=pw)
 
 df = cmc_recently_added()
 
-if __name__ == '__main__':
-    execute_tweet(df=df,
-                  schema=schema,
-                  table=table,
-                  conn=conn,
-                  akey=api_key,
-                  asecret=api_secret,
-                  axtoken=ax_token,
-                  axsecret=ax_token_secret
-                  )
+try:
+    if __name__ == '__main__':
+        execute_tweet(df=df,
+                      schema=schema,
+                      table=table,
+                      conn=conn,
+                      akey=api_key,
+                      asecret=api_secret,
+                      axtoken=ax_token,
+                      axsecret=ax_token_secret
+                      )
+except:
+    p = 'cmc-new-coin-listing'
+    auth = os.environ['MAIL']
+    sender = os.environ['SENDER']
+    recipient = os.environ['RECIPIENT']
+    email_error(project=p, schema=schema, conn=conn, auth=auth, sender=sender, recipient=recipient)

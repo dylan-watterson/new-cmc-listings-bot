@@ -1,11 +1,14 @@
 from sqlalchemy import create_engine, text
+from datetime import datetime
 from bs4 import BeautifulSoup
 import pandas as pd
 import requests
 import tweepy
 import pyshorteners
 import re
-
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 def db_connection(user, host, port, db, cred=''):
     """
@@ -20,6 +23,59 @@ def db_connection(user, host, port, db, cred=''):
 
     conn = create_engine(f'postgresql+psycopg2://{user}:{cred}@{host}:{port}/{db}?sslmode=require')
     return conn
+
+
+def email_error(project, schema, conn, auth, sender, recipient):
+    """
+
+    :param project:
+    :param schema:
+    :param conn:
+    :param auth:
+    :return:
+    """
+
+    q = f"select date_sent from {schema}.email_log where project = '{project}'"
+    date_sent = pd.read_sql(text(q), con=conn.connect())
+
+    if date_sent.empty:
+        date_sent = ''
+    else:
+        date_sent = date_sent.iloc[0]['date_sent']
+
+    today = datetime.now().date()
+
+    if today != date_sent:
+
+        # Set up the message headers
+        msg = MIMEMultipart()
+        msg['From'] = sender
+        msg['To'] = recipient
+        msg['Subject'] = f'Error Alert for {project}'
+
+        # Set up the message body
+        body = f'There is an error within the app - {project}.'
+        msg.attach(MIMEText(body, 'plain'))
+
+        # Set up the SMTP server
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(sender, auth)
+
+        # Send the email
+        text_msg = msg.as_string()
+        server.sendmail(sender, recipient, text_msg)
+        server.quit()
+
+        d = {
+            'project': [project],
+            'date_sent': [today]
+        }
+        df = pd.DataFrame(data=d)
+
+        df.to_sql('email_log', con=conn, schema=schema, if_exists='replace')
+
+    return
 
 
 def cmc_recently_added():
@@ -161,3 +217,6 @@ def execute_tweet(df, schema, table, conn, akey, asecret, axtoken, axsecret):
         print('No new coins added!')
 
     return
+
+
+
