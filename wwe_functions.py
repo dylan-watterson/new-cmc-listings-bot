@@ -87,10 +87,11 @@ def web_crawler(path, options):
     """
 
     # Create a WebDriver instance
-    chrome_options = webdriver.ChromeOptions()
+    chrome_options = webdriver.Options()
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
+    print(path, options)
     chrome_options.binary_location = options
 
     driver = webdriver.Chrome(executable_path=path, chrome_options=chrome_options)
