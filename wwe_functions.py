@@ -168,7 +168,8 @@ def create_added_tweet(txt):
 
     check_mark = 'U00002705'
     tweet = (
-        f"""{chr(int(check_mark[1:], 16))} {txt} added to Current Superstars!"""
+        f"""{chr(int(check_mark[1:], 16))} {txt} added to Current Superstars!\n"""
+        f"""#wwe #wweraw #wwesmackdown #wwesd #wwenxt #{txt.replace(' ', '')}"""
     )
     print('Executing Tweet!\n')
     print(tweet)
@@ -183,7 +184,8 @@ def create_removed_tweet(txt):
 
     check_mark = 'U0000274C'
     tweet = (
-        f"""{chr(int(check_mark[1:], 16))} {txt} removed from Current Superstars!"""
+        f"""{chr(int(check_mark[1:], 16))} {txt} removed from Current Superstars!\n"""
+        f"""#wwe #wweraw #wwesmackdown #wwesd #wwenxt #{txt.replace(' ', '')}"""
     )
     print('Executing Tweet!\n')
     print(tweet)
