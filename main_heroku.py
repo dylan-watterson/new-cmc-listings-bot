@@ -33,6 +33,7 @@ try:
                       axsecret=ax_token_secret
                       )
 except:
+    print('ERROR ALERT')
     p = 'wwe-current-roster-bot'
     auth = os.environ['MAIL']
     sender = os.environ['SENDER']
