@@ -142,11 +142,11 @@ def web_crawler(path, options):
     names = soup.find_all('span', {'class': 'superstars--name'})
     print(names)
 
-    # Get the current date and time
-    current_datetime = datetime.now()
-
-    # Format the current date and time as 'YYYY-MM-DD HH:MM'
-    formatted_datetime = current_datetime.strftime('%Y-%m-%d %H:%M')
+    # # Get the current date and time
+    # current_datetime = datetime.now()
+    #
+    # # Format the current date and time as 'YYYY-MM-DD HH:MM'
+    # formatted_datetime = current_datetime.strftime('%Y-%m-%d %H:%M')
 
     current_names = []
     for name in names:
@@ -154,8 +154,9 @@ def web_crawler(path, options):
         current_names.append(superstar)
 
     d = {
-        'current_superstars': current_names,
-        'scraped_datetime': formatted_datetime
+        'current_superstars': current_names
+        # ,
+        # 'scraped_datetime': formatted_datetime
     }
 
     df = pd.DataFrame(data=d)
