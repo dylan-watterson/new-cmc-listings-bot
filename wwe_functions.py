@@ -14,6 +14,7 @@ from email.mime.multipart import MIMEMultipart
 def db_connection(user, host, port, db, cred=''):
     """
     Postgres database connector.
+
     @param user: username.
     @param host: server name.
     @param port: connection port.
@@ -28,12 +29,13 @@ def db_connection(user, host, port, db, cred=''):
 
 def email_error(project, schema, conn, auth, sender, recipient):
     """
+    Sends an email alerting potential error within the app.
 
-    :param project:
-    :param schema:
-    :param conn:
-    :param auth:
-    :return:
+    :param project: name of project / app.
+    :param schema: schema name to add error.
+    :param conn: postgres connector.
+    :param auth: email account credentials.
+    :return: sends error alert via email.
     """
 
     q = f"select date_sent from {schema}.email_log where project = '{project}'"
@@ -47,7 +49,6 @@ def email_error(project, schema, conn, auth, sender, recipient):
     today = datetime.now().date()
 
     if today != date_sent:
-
         # Set up the message headers
         msg = MIMEMultipart()
         msg['From'] = sender
@@ -81,9 +82,10 @@ def email_error(project, schema, conn, auth, sender, recipient):
 
 def web_crawler(path, options):
     """
+    Uses Selenium and bs4 to scrape all wwe superstars on the current roster.
 
-    :param path:
-    :return:
+    :param path: os path to selenium driver.
+    :return: DataFrame - list of current superstars
     """
 
     # Create a WebDriver instance
@@ -95,8 +97,6 @@ def web_crawler(path, options):
     chrome_options.binary_location = options
 
     driver = webdriver.Chrome(executable_path=path, chrome_options=chrome_options)
-
-
 
     # Navigate to the webpage
     url = 'https://www.wwe.com/superstars'  # Replace with the URL of the webpage you want to scrape
@@ -142,13 +142,20 @@ def web_crawler(path, options):
     names = soup.find_all('span', {'class': 'superstars--name'})
     print(names)
 
+    # Get the current date and time
+    current_datetime = datetime.now()
+
+    # Format the current date and time as 'YYYY-MM-DD HH:MM'
+    formatted_datetime = current_datetime.strftime('%Y-%m-%d %H:%M')
+
     current_names = []
     for name in names:
         superstar = name.text.strip()
         current_names.append(superstar)
 
     d = {
-        'current_superstars': current_names
+        'current_superstars': current_names,
+        'scraped_datetime': formatted_datetime
     }
 
     df = pd.DataFrame(data=d)
@@ -161,42 +168,48 @@ def web_crawler(path, options):
 
 def create_added_tweet(txt):
     """
+    Creates tweet for an added wwe superstar.
 
     :param txt:
     :return:
     """
 
+    # Green tick check mark
     check_mark = 'U00002705'
     tweet = (
         f"""{chr(int(check_mark[1:], 16))} {txt} added to Current Superstars!\n"""
-        f"""#wwe #wweraw #wwesmackdown #wwesd #wwenxt #{txt.replace(' ', '')}"""
+        f"""#wwe #wweraw #wwesmackdown #wwesd #wwenxt #{txt.replace(' ', '').replace("'", "")}"""
     )
     print('Executing Tweet!\n')
     print(tweet)
     return tweet
 
+
 def create_removed_tweet(txt):
     """
+    Creates tweet for a removed wwe superstar.
 
     :param txt:
     :return:
     """
 
+    # Red cross X check mark
     check_mark = 'U0000274C'
     tweet = (
         f"""{chr(int(check_mark[1:], 16))} {txt} removed from Current Superstars!\n"""
-        f"""#wwe #wweraw #wwesmackdown #wwesd #wwenxt #{txt.replace(' ', '')}"""
+        f"""#wwe #wweraw #wwesmackdown #wwesd #wwenxt #{txt.replace(' ', '').replace("'", "")}"""
     )
     print('Executing Tweet!\n')
     print(tweet)
     return tweet
+
 
 def execute_tweet(df, schema, table, conn, akey, asecret, axtoken, axsecret):
     """
 
-    :param df:
-    :param schema:
-    :param table:
+    :param df: list of current wwe superstars
+    :param schema: schema name
+    :param table: table name
     :param conn:
     :param akey:
     :param asecret:
@@ -212,15 +225,17 @@ def execute_tweet(df, schema, table, conn, akey, asecret, axtoken, axsecret):
     if init_table.empty:
         df.to_sql('wwe_current_base_table', con=conn, schema=schema, if_exists='replace', index=False)
 
-    # df.to_sql('wwe_current_superstar_table', con=conn, schema=schema, if_exists='replace', index=False)
-
-    base_query = "select current_superstars from wwe.wwe_current_superstar_table EXCEPT select current_superstars from wwe.wwe_current_base_table"
+    # Check for added wwe superstars
+    base_query = "select current_superstars from wwe.wwe_current_superstar_table EXCEPT select current_superstars " \
+                 "from wwe.wwe_current_base_table "
     base_check = pd.read_sql(text(base_query), con=conn.connect())
 
-    current_query = "select current_superstars from wwe.wwe_current_base_table EXCEPT select current_superstars from wwe.wwe_current_superstar_table"
+    # Check for removed wwe superstars
+    current_query = "select current_superstars from wwe.wwe_current_base_table EXCEPT select current_superstars from " \
+                    "wwe.wwe_current_superstar_table "
     current_check = pd.read_sql(text(current_query), con=conn.connect())
 
-
+    # Creates tweet is a new value has been added to Current Superstars.
     if not base_check.empty:
         for c in base_check['current_superstars']:
 
@@ -230,7 +245,7 @@ def execute_tweet(df, schema, table, conn, akey, asecret, axtoken, axsecret):
             access_token = axtoken
             access_secret = axsecret
 
-            # # # Authenticate to Twitter
+            # # Authenticate to Twitter
             auth = tweepy.OAuthHandler(api_key, api_secrets)
             auth.set_access_token(access_token, access_secret)
 
@@ -251,6 +266,7 @@ def execute_tweet(df, schema, table, conn, akey, asecret, axtoken, axsecret):
 
         df.to_sql('wwe_current_base_table', con=conn, schema=schema, if_exists='replace')
 
+    # Creates tweet is a value has been removed to Current Superstars.
     if not current_check.empty:
         for c in current_check['current_superstars']:
 
@@ -260,7 +276,7 @@ def execute_tweet(df, schema, table, conn, akey, asecret, axtoken, axsecret):
             access_token = axtoken
             access_secret = axsecret
 
-            # # # Authenticate to Twitter
+            # # Authenticate to Twitter
             auth = tweepy.OAuthHandler(api_key, api_secrets)
             auth.set_access_token(access_token, access_secret)
 
@@ -280,7 +296,6 @@ def execute_tweet(df, schema, table, conn, akey, asecret, axtoken, axsecret):
             api.update_status(status=status)
 
         df.to_sql('wwe_current_superstar_table', con=conn, schema=schema, if_exists='replace')
-
 
     else:
         print('No superstars have been added/removed from Current!')
