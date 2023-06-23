@@ -147,13 +147,12 @@ def create_tweet(df):
         f"""Symbol: {sym}\n"""
         f"""Current Price: {price}\n"""
         f"""Fully Diluted MC: {market}\n"""
-        # f"""Volume: {volume}\n"""
-        f"""Blockchain: {chain}\n"""#Added: {added}\n\n"""
+        f"""Blockchain: {chain}\n"""
         f"""#crypto #cryptocurrency #{hashtag_coin} #{sym} {'' if chain == 'Own Blockchain' else '#'+str(chain)} #BTC \n"""
         f"""{short_url}"""
     )
     print('Executing Tweet!\n')
-    print(tweet)
+    print(tweet, len(tweet))
     return tweet
 
 
