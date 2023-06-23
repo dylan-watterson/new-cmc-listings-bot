@@ -151,6 +151,10 @@ def create_tweet(df):
         f"""#crypto #cryptocurrency #{hashtag_coin} #{sym} {'' if chain == 'Own Blockchain' else '#'+str(chain)} #BTC \n"""
         f"""{short_url}"""
     )
+
+    if len(tweet) > 280:
+        tweet = tuple(list(tweet)[:280])
+
     print('Executing Tweet!\n')
     print(tweet, len(tweet))
     return tweet
