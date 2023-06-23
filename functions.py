@@ -153,7 +153,7 @@ def create_tweet(df):
     )
 
     if len(tweet) > 280:
-        tweet = tuple(list(tweet)[:280])
+        tweet = tuple(''.join(list(tweet)[:280]))
 
     print('Executing Tweet!\n')
     print(tweet, len(tweet))
