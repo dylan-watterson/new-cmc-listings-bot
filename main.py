@@ -32,8 +32,9 @@ try:
                       axsecret=ax_token_secret
                       )
 except:
-    p = 'cmc-new-coin-listing'
-    auth = os.environ['MAIL']
-    sender = os.environ['SENDER']
-    recipient = os.environ['RECIPIENT']
-    email_error(project=p, schema=schema, conn=conn, auth=auth, sender=sender, recipient=recipient)
+    pass
+    # p = 'cmc-new-coin-listing'
+    # auth = os.environ['MAIL']
+    # sender = os.environ['SENDER']
+    # recipient = os.environ['RECIPIENT']
+    # email_error(project=p, schema=schema, conn=conn, auth=auth, sender=sender, recipient=recipient)
